@@ -18,9 +18,10 @@ Storage and HA are not supported yet but working on it.
       * Ansible 1.2+ installed on a system having ssh access to all your OpenStack target host(s)
       * Targetted hosts must have
         * RHEL6.4+ or Fedora 19+ installed
-        * OpenStack repos
+        * Either OpenStack repos
           * RHEL: [RDO repo](repos.fedorapeople.org/repos/openstack/) or RHOS 3.0 channel
           * Fedora repo
+        * Controller node(s) must have partition allocated for Cinder
       * If using RHOS, also consult README-RHOS30
   2. Create a `hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
@@ -31,6 +32,7 @@ Storage and HA are not supported yet but working on it.
        N x controller(s), N x network node(s), N x compute node(s)
   3. Edit group_vars values:
      * Passwords and secrets keys
+     * Change `cinder_volume_dev` key accordingly
      * Neutron
        * Set `quantum_external_interface` and `quantum_internal_interface` keys, see Assumptions above
        * VLANs
