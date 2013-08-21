@@ -15,7 +15,7 @@ Storage and HA are not supported yet but working on it.
 
 **How To**  
   1.  Requirements
-      * Ansible 1.2+ installed on a system having ssh access to all your OpenStack target host(s)
+      * Ansible 1.2+ installed (epel6 for RHEL) on a system having ssh access to all your OpenStack target host(s)
       * Targetted hosts must have
         * RHEL6.4+ or Fedora 19+ installed
         * Either OpenStack repos
@@ -23,14 +23,16 @@ Storage and HA are not supported yet but working on it.
           * Fedora repo
         * Controller node(s) must have partition allocated for Cinder
       * If using RHOS, also consult README-RHOS30
-  2. Create a `hosts` inventory file, use hosts-examples directory for templates:
+  2. Copy Ansible defintions
+     `git clone https://github.com/gildub/arrod openstack
+  3. Create a `your-hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
        1 x Controller/Network/Compute node 
      * Controller and network service:  
        N x controller(s), N x compute node(s)
      * All separate:  
        N x controller(s), N x network node(s), N x compute node(s)
-  3. Edit group_vars values:
+  4. Edit group_vars values:
      * Passwords and secrets keys
      * Change `cinder_volume_dev` key accordingly
      * Neutron
@@ -40,10 +42,11 @@ Storage and HA are not supported yet but working on it.
          * Set `splinters: True` if [needed](https://access.redhat.com/site/articles/289823)
        * GRE tunnels
          * Set `provider_network_type: gre`
-  4. Deploy
-     1. Make sure you have ssh access to all hosts  
+  5. Deploy
+     1. From the ansible installed system, make sure you have ssh access to all hosts  
         For instance have an ssh key installed on all hosts and use ssh-agent
-     2. Run Ansible using inventory file created above  
-        `# ansible-playbooks -i hosts site.yml`
+     2. Run Ansible using inventory file created above from the definitions directory:
+        `# cd openstack`  
+        `# ansible-playbooks -i ../your-hosts site.yml`
      3. If it fails, address issue according to the message and re-run Ansible: wash, rince and repeat!
 
