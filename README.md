@@ -23,8 +23,8 @@ Storage and HA are not supported yet but working on it.
           * Fedora repo
         * Controller node(s) must have partition allocated for Cinder
       * If using RHOS, also consult README-RHOS30
-  2. Copy Ansible defintions
-     `git clone https://github.com/gildub/arrod openstack
+  2. Copy Ansible definitions to some directory:
+     `git clone https://github.com/gildub/arrod openstack`
   3. Create a `your-hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
        1 x Controller/Network/Compute node 
