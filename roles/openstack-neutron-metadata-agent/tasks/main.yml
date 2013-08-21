@@ -1,0 +1,25 @@
+---
+# Task for openstack networking metadata agent
+# RDO and RHOS to be re-packaged for better granularity
+- name: install quantum
+  yum: name=openstack-quantum
+
+- name: configure metadata agent  
+  command: /usr/bin/openstack-config --set /etc/quantum/metadata_agent.ini DEFAULT {{ item }}
+  with_items:
+    - nova_metadata_ip {{ controller_ip }}
+    - admin_user quantum
+    - admin_password {{ quantum_pass }}
+    - admin_tenant_name service
+    - auth_url http://{{ controller_ip }}:35357/v2.0/
+    - metadata_proxy_shared_secret {{ quantum_metadata_proxy_shared_secret }}
+
+- name: configure nova for openstack networking metadata agent
+  command: /usr/bin/openstack-config --set /etc/nova/nova.conf DEFAULT {{ item }}
+  with_items:
+    - service_quantum_metadata_proxy True
+    - quantum_metadata_proxy_shared_secret {{ quantum_metadata_proxy_shared_secret }}
+  delegate_to: "{{ controller_ip }}"
+
+- name: activate metadata agent
+  service: name=quantum-metadata-agent state=started enabled=yes

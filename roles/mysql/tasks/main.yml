@@ -1,0 +1,19 @@
+---
+# Tasks for mysql role
+
+- name: Install mysql packages
+  yum: name={{ item }} state=installed
+  with_items:
+    - mysql-server
+    - mysql
+
+- name: start mysql services
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - mysqld
+
+- name: set root passwd
+  command: /usr/bin/mysqladmin -u root password {{ mysql_root_pass }}
+
+- name: set root my.cnf
+  template: src=my.cnf.j2 dest=/root/.my.cnf

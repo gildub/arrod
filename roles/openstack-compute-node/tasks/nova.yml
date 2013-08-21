@@ -1,0 +1,49 @@
+---
+# Tasks for the openstack compute nodes
+
+- name: Install packages for openstack compute nodes
+  yum: name={{ item }} state=present
+  with_items:
+    - openstack-nova-compute 
+    - openstack-utils
+
+- include: ../../openstack-controller-node/tasks/nova-config.yml
+
+- name: configure nova for compute
+  command: /usr/bin/openstack-config --set /etc/nova/nova.conf DEFAULT {{ item }}
+  with_items:
+    # Compute
+    - compute_driver libvirt.LibvirtDriver
+    # Hypervisor
+    - libvirt_type {{ nova_libvirt_type }}
+    # - libvirt_cpu_mode host-passthrough
+    - libvirt_cpu_mode host-model
+    # novnc
+    - novncproxy_base_url http://{{ controller_fqdn }}:6080/vnc_auto.html
+    - vncserver_proxyclient_address {{ ansible_all_ipv4_addresses[0] }}
+    - vncserver_listen {{ ansible_all_ipv4_addresses[0] }}
+
+- name: configure nova for neutron service
+  command: /usr/bin/openstack-config --set /etc/nova/nova.conf DEFAULT {{ item }}
+  with_items:
+    - network_api_class nova.network.quantumv2.api.API
+    - quantum_admin_username admin
+    - quantum_admin_password {{ admin_pass }}
+    - quantum_admin_auth_url http://{{ controller_ip }}:35357/v2.0
+    - quantum_auth_strategy keystone
+    - quantum_admin_tenant_name admin
+    - quantum_url http://{{ controller_ip }}:9696
+    - security_group_api quantum
+    - firewall_driver nova.virt.firewall.NoopFirewallDriver
+    - libvirt_vif_driver nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
+    
+- name: Give permissions to lock folder
+  file: path=/var/lock/ state=directory owner=root group=root mode=0777
+
+- name: Copy the modified file for key injection bug
+  copy: src=guestfs.py dest=/usr/lib/python2.6/site-packages/nova/virt/disk/vfs/
+  when: ansible_distribution == 'RedHat'
+
+- name: restart nova compute
+  service: name=openstack-nova-compute state=started enabled=yes
+

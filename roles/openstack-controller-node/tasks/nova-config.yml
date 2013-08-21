@@ -1,0 +1,43 @@
+---
+# Task for configuring nova
+
+- name: configure nova
+  command: /usr/bin/openstack-config --set /etc/nova/nova.conf DEFAULT {{ item }}
+  with_items:
+    # Logs
+    - verbose True
+    - logdir /var/log/nova
+    - state_path /var/lib/nova
+    - lock_path /var/lock/nova
+    - rootwrap_config /etc/nova/rootwrap.conf
+    # Scheduler
+    - compute_scheduler_driver nova.scheduler.filter_scheduler.FilterScheduler
+    # Volumes
+    - volume_api_class nova.volume.cinder.API
+    # Database
+    - sql_connection mysql://nova:"{{ nova_db_pass }}"@{{ controller_ip }}/nova
+    # APIs
+    - ec2_dmz_host {{ controller_ip }}
+    - osapi_compute_extension nova.api.openstack.compute.contrib.standard_extensions
+    - s3_host {{ controller_ip }}
+    # Qpid
+    - rpc_backend nova.rpc.impl_qpid
+    - qpid_hostname {{ controller_ip }}
+        # Glance
+    - image_service nova.image.glance.GlanceImageService
+    - glance_api_servers {{ controller_ip }}:9292
+    # Change my_ip to match each host
+    - my_ip {{ ansible_default_ipv4.address }} 
+    # Authentication
+    - auth_strategy keystone
+
+- name: configure nova keystone_authtoken
+  command: /usr/bin/openstack-config --set /etc/nova/nova.conf keystone_authtoken {{ item }}
+  with_items:
+    - admin_tenant_name admin
+    - admin_user admin
+    - admin_password {{ admin_pass }}
+    - auth_host {{ controller_ip }}
+    - auth_port 35357
+    - auth_protocol http
+    - signing_dir /tmp/keystone-signing-nova

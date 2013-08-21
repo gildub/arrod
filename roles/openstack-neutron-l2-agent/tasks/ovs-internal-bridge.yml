@@ -1,0 +1,53 @@
+---
+# Tasks for creating internal bridge br-ethX
+
+# The idea is keep existing config/IP
+# 1. Move existing physical interface config to bridge config
+# 2. Adjust bridge parameters 
+# 3. Create physical interface from template
+# Example: ifcfg-eth0 -> ifcfg-br-eth0
+#          template -> ifcfg-eth0
+
+- name: create openvswitch internal bridge
+  shell: /usr/bin/ovs-vsctl --may-exist add-br br-{{ quantum_internal_interface }} 
+  when: provider_network_type == "vlan"
+
+- name: mv internal physical interface config to internal
+  command: /bin/mv /etc/sysconfig/network-scripts/ifcfg-{{ quantum_internal_interface }} /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}
+           creates=/etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}
+  when: provider_network_type == "vlan"
+
+- name: unset hwaddr
+  command: /bin/sed -i s/HWADDR=.*// /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}  
+  when: provider_network_type == "vlan"  
+
+- name: unset UUID
+  command: /bin/sed -i s/UUID=.*// /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}   
+  when: provider_network_type == "vlan"    
+
+- name: set internal bridge name
+  command: /bin/sed -i s/DEVICE=.*/DEVICE=br-{{ quantum_internal_interface }}/ /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}        
+  when: provider_network_type == "vlan"
+  
+- name: set internal bridge type
+  command: /bin/sed -i s/TYPE=.*/TYPE=OVSBridge/ /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}
+  when: provider_network_type == "vlan"
+
+- name: set internal bridge devicetype
+  shell: /bin/echo -e "DEVICETYPE=ovs" >> /etc/sysconfig/network-scripts/ifcfg-br-{{ quantum_internal_interface }}
+  when: provider_network_type == "vlan"
+
+- name: copy new internal physical interface config 
+  template: src=ifcfg-eth dest=/etc/sysconfig/network-scripts/ifcfg-{{ quantum_internal_interface }}
+  when: provider_network_type == "vlan"
+
+- name: switch on internal bridge - atomic operation set
+  shell: /usr/bin/ovs-vsctl --may-exist add-port br-{{ quantum_internal_interface }} {{ quantum_internal_interface }}; service network restart 
+  when: provider_network_type == "vlan"
+
+- name: setup internal interface splinter
+  shell: /usr/bin/ovs-vsctl set int {{ quantum_internal_interface }} other-config:enable-vlan-splinters=true
+  when: splinters and provider_network_type == "vlan"
+  
+- local_action: pause seconds=30
+  when: provider_network_type == "vlan"

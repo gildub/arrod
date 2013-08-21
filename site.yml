@@ -1,0 +1,6 @@
+---
+# The main openstack site deployment playbook
+
+- include: openstack_controllers.yml
+- include: openstack_networkers.yml
+- include: openstack_computers.yml

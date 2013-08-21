@@ -1,0 +1,6 @@
+---
+# Handlers for the Quantum L3 Agent plays
+
+- name: restart network l3 agent
+  service: name=quantum-l3-agent state=restarted 
+

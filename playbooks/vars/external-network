@@ -1,0 +1,6 @@
+---
+# External network vars
+
+external_network_name: external_network
+external_subnet_name: external_sub_network
+external_subnet_cidr: 10.1.1.0/24

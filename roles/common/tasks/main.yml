@@ -1,0 +1,23 @@
+---
+# The common tasks
+
+- name: install required packages
+  yum: name={{ item }} state=installed
+  with_items:
+   - ntp
+   - sudo
+   - scsi-target-utils
+   - dbus
+   - libselinux-python
+   - openssl-devel
+  notify: restart services 
+
+- name: disable selinux dynamically
+  shell: creates=/etc/sysconfig/selinux.disabled setenforce 0 ; touch /etc/sysconfig/selinux.disabled
+
+- name: disable SELinux in conf file
+  copy: src=selinux dest=/etc/sysconfig/selinux
+
+- name:  iptables
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables 
+  notify: restart firewall

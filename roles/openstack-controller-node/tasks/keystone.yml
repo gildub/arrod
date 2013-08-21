@@ -1,0 +1,55 @@
+---
+# Tasks for the keystone controller node
+
+- name: Install OpenStack keystone  packages.
+  yum: name={{ item }} state=installed
+  with_items: 
+   - openstack-keystone
+   - python-keystoneclient
+
+- name: copy keystone-dist-paste.ini file 
+  command: /bin/cp /usr/share/keystone/keystone-dist-paste.ini /etc/keystone/keystone-dist-paste.ini
+           creates=/etc/keystone/keystone-dist-paste.ini
+
+- name: Setup DB for keystone
+  shell: creates=/var/lib/mysql/keystone /usr/bin/openstack-db --init --service keystone -p {{ keystone_db_pass }} -r "{{ mysql_root_pass }}" -y 
+
+- name: Create certs for the keystone
+  shell: creates=/etc/keystone/ssl/certs/ca.pem
+         /usr/bin/keystone-manage pki_setup  --keystone-user keystone --keystone-group keystone; chmod 777 /var/lock
+
+- name: configure keystone DEFAULT section
+  command: /usr/bin/openstack-config --set /etc/keystone/keystone.conf DEFAULT {{ item }}
+  with_items:
+    - admin_token {{ keystone_admin_token }}
+
+- name: Change ownership of all files to keystone
+  file: path=/etc/keystone recurse=yes owner=keystone group=keystone state=directory
+
+- name: copy keystone mysql data
+  copy: src=keystone.mysql dest=/root/keystone-import.mysql
+  when: migrate
+
+- name: inject keystone mysql data
+  shell: /usr/bin/mysql -u root keystone < /root/keystone-import.mysql
+  when: migrate
+
+- name: DB sync for keystone
+  shell: /usr/bin/keystone-manage db_sync; touch /etc/keystone/db.synced
+         creates=/etc/keystone/db.synced
+
+# Under Fedora, starting service migth timeout: ignore it
+- name: Start the keystone services
+  service: name=openstack-keystone state=started enabled=yes
+  ignore_errors: True
+
+# TODO: public address 
+- name: load keystone database
+  shell: ADMIN_PASSWORD={{ admin_pass }} SERVICE_PASSWORD={{ service_pass }}
+         CONTROLLER_PUBLIC_ADDRESS={{ ansible_default_ipv4.address }}
+         CONTROLLER_ADMIN_ADDRESS={{ ansible_default_ipv4.address }} 
+         CONTROLLER_INTERNAL_ADDRESS={{ ansible_default_ipv4.address }}
+         /usr/share/keystone/sample_data.sh
+
+- name: Create admin keystonerc file
+  template: src=keystonerc.j2 dest=/root/keystonerc mode=0755

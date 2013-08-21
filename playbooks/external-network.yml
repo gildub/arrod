@@ -1,0 +1,37 @@
+---
+# Tasks for openstack l3 agent logical network configuration - Per tenant router topology
+
+- hosts: openstack_controllers
+  vars_files:
+    - ../group_vars/all
+    - vars/tenants
+
+- name: create external network
+  quantum_network: state=present 
+                   login_tenant_name={{ admin_tenant }}
+                   login_username={{ admin_tenant_user }}
+                   login_password={{ admin_pass }}
+                   auth_url=http://{{ controller_ip }}:35357/v2.0/
+                   provider_network_type=local
+                   router_external=true
+                   name={{ external_network_name }}
+  register: network
+  delegate_to: "{{ controller_ip }}"
+
+- name: create external network subnet
+  quantum_subnet: state=present
+                  login_tenant_name={{ admin_tenant }} 
+                  login_username={{ admin_tenant_user }}
+                  login_password={{ admin_pass }} 
+                  auth_url=http://{{ controller_ip }}:35357/v2.0/
+                  enable_dhcp=false
+                  network_name={{ external_network_name }}
+                  cidr={{ external_subnet_cidr }}
+                  name={{ external_subnet_name }}
+  delegate_to: "{{ controller_ip }}"
+
+- name: configure l3 agent for network and subnet
+  command: /usr/bin/openstack-config --set /etc/quantum/l3_agent.ini DEFAULT gateway_external_network_id {{ network.id }}
+  notify: restart network l3 agent
+  delegate_to: "{{ hostvars[groups['openstack_networkers'][0]].ansible_all_ipv4_addresses[0] }}"
+

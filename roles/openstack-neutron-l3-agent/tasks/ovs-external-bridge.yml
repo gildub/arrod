@@ -1,0 +1,36 @@
+---
+# Tasks for creating external bridge br-ethX
+
+- name: create openvswitch external bridge
+  shell: /usr/bin/ovs-vsctl --may-exist add-br br-ex
+
+- name: mv external physical interface config 
+  command: /bin/mv /etc/sysconfig/network-scripts/ifcfg-{{ quantum_external_interface }} /etc/sysconfig/network-scripts/ifcfg-br-ex
+           creates=/etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: unset HWADDR
+  command: /bin/sed -i s/HWADDR=.*// /etc/sysconfig/network-scripts/ifcfg-br-ex    
+
+- name: unset UUID
+  command: /bin/sed -i s/UUID=.*// /etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: set external bridge name
+  command: /bin/sed -i s/DEVICE=.*/DEVICE=br-ex/ /etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: set external bridge type
+  command: /bin/sed -i s/TYPE=.*/TYPE=OVSBridge/ /etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: set external bridge device type
+  shell: /bin/echo -e "DEVICETYPE=ovs" >> /etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: copy new external physical interface config 
+  template: src=ifcfg-eth dest=/etc/sysconfig/network-scripts/ifcfg-{{ quantum_external_interface }}
+
+- name: switch on external bridge - atomic operation set
+  shell: /usr/bin/ovs-vsctl --may-exist add-port br-ex {{ quantum_external_interface }}; service network restart  
+
+- name: setup external interface splinter
+  shell: /usr/bin/ovs-vsctl set int {{ quantum_external_interface }} other-config:enable-vlan-splinters=true
+  when: splinters and provider_network_type == "vlan"
+
+- local_action: pause seconds=30

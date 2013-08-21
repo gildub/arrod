@@ -1,0 +1,5 @@
+---
+# Tasks for the network node
+
+- name: Enable ipv4 forwarding in the host
+  sysctl: name=net.ipv4.ip_forward value=1 reload=yes

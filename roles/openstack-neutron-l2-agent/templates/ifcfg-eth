@@ -1,0 +1,6 @@
+DEVICE={{ quantum_internal_interface }}
+DEVICETYPE=ovs
+TYPE=OVSPort
+OVS_BRIDGE=br-{{ quantum_internal_interface }}
+ONBOOT=yes
+BOOTPROTO=none

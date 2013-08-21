@@ -1,0 +1,10 @@
+[openstack_controllers]
+host1
+
+[openstack_networkers]
+host1
+
+[openstack_computers]
+host2
+host3
+

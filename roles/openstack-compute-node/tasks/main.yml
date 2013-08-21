@@ -1,0 +1,5 @@
+---
+# Tasks for the openstack compute nodes
+
+- include: virt.yml
+- include: nova.yml

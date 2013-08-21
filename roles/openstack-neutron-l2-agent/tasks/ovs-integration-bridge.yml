@@ -1,0 +1,8 @@
+---
+# OVS Integration bridge
+
+- name: create openvswitch integration bridge
+  shell: /usr/bin/ovs-vsctl --may-exist add-br br-int
+
+- name: persist integration bridge
+  template: src=ifcfg-br-int dest=/etc/sysconfig/network-scripts/ifcfg-br-int

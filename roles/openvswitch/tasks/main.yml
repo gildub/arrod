@@ -1,0 +1,15 @@
+---
+# Task for openvswitch
+
+- name: unload bridge module
+  command: /sbin/rmmod bridge
+  ignore_errors: True
+
+- name: install required packages
+  yum: name=openvswitch state=installed
+
+- name: load openvswitch module
+  command: /sbin/modprobe openvswitch 
+
+- name: start the openvswitch service.
+  service: name=openvswitch state=started

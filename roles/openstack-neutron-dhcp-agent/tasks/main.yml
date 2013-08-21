@@ -1,0 +1,40 @@
+---
+# Tasks for openstack networking dhcp agent
+
+# RDO and RHOS to re-packaged for better granularity
+- name: install quantum
+  yum: name=openstack-quantum
+
+- name: configure quantum 
+  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf DEFAULT {{ item }}
+  with_items:
+    - core_plugin quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2
+    - control_exchange quantum
+    - qpid_hostname {{ controller_ip }}
+    - rpc_backend quantum.openstack.common.rpc.impl_qpid
+    - notification_topics notifications
+
+- name: allow overlapping subnets
+  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf DEFAULT allow_overlapping_ips True
+
+- name: configure common device manager options
+  command: /usr/bin/openstack-config --set /etc/quantum/dhcp_agent.ini DEFAULT {{ item }}
+  with_items:
+    - interface_driver quantum.agent.linux.interface.OVSInterfaceDriver
+    - auth_url http://{{ controller_ip }}:35357/v2.0/
+    - admin_tenant_name service
+    - admin_username quantum
+    - admin_password {{ quantum_pass }}
+    - ovs_use_veth True
+    - debug False
+    - verbose True
+
+- name: configure dhcp agent
+  command: /usr/bin/openstack-config --set /etc/quantum/dhcp_agent.ini DEFAULT {{ item }}
+  with_items:
+  - dhcp_driver quantum.agent.linux.dhcp.Dnsmasq
+  - root_helper "sudo /usr/bin/quantum-rootwrap /etc/quantum/rootwrap.conf"
+  - use_namespaces True
+
+- name: activate dhcp agent
+  service: name=quantum-dhcp-agent state=started enabled=yes

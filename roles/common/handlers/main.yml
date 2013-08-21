@@ -1,0 +1,18 @@
+---
+# handlers for the common tasks
+
+- name: restart firewall
+  service: name=iptables state=restarted
+  when: ansible_distribution == 'RedHat'
+
+- name: restart firewall
+  service: name=firewalld.service state=restarted
+  when: ansible_distribution == 'Fedora'
+
+- name: restart services
+  service: name={{ item }} state=restarted
+  with_items:
+   - ntpd
+   - messagebus
+
+

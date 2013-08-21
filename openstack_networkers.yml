@@ -1,0 +1,13 @@
+---
+# networkers
+
+- hosts: openstack_networkers
+  vars_files:
+    - group_vars/all
+  roles:
+    - openstack-neutron-node
+    - openvswitch
+    - openstack-neutron-l2-agent
+    - openstack-neutron-dhcp-agent
+    - openstack-neutron-l3-agent
+    - openstack-neutron-metadata-agent

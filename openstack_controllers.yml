@@ -1,0 +1,12 @@
+---
+# controllers
+
+- hosts: openstack_controllers 
+  vars_files:
+    - group_vars/all
+  roles:
+    - common
+    - mysql
+    - qpid
+    - openstack-controller-node
+    - openstack-neutron

@@ -1,0 +1,29 @@
+---
+# Handlers for the controller plays
+
+- name: restart keystone
+  service: name=openstack-keystone state=restarted
+
+- name: restart glance
+  service: name={{ item }} state=restarted
+  with_items:
+   - openstack-glance-api
+   - openstack-glance-registry
+
+- name: restart cinder
+  service: name={{ item }} state=restarted enabled=yes
+  with_items:
+   - openstack-cinder-api
+   - openstack-cinder-scheduler
+   - openstack-cinder-volume
+
+- name: restart tgtd
+  service: name=tgtd state=restarted
+
+- name: restart horizon
+  service: name={{ item }} state=restarted
+  with_items:
+   - openstack-nova-consoleauth
+   - openstack-nova-novncproxy
+   - httpd
+   - memcached

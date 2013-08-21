@@ -1,0 +1,9 @@
+---
+# Task for openstack controller node
+
+- include: base.yml
+- include: keystone.yml
+- include: glance.yml
+- include: nova.yml
+- include: cinder.yml
+- include: horizon.yml

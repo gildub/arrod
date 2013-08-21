@@ -1,0 +1,72 @@
+---
+# Tasks for openstack neutron l2 agent configuration
+
+- name: configure neutron DEFAULT section
+  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf DEFAULT {{ item }}
+  with_items:
+    - core_plugin quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2
+    - auth_strategy keystone
+    - rpc_backend quantum.openstack.common.rpc.impl_qpid
+    - notification_driver quantum.openstack.common.notifier.log_notifier
+    - default_notification_level INFO
+    - default_publisher_id $host
+    - allow_overlapping_ips True
+    - qpid_hostname {{ controller_ip }}
+    - verbose True
+#    - control_exchange quantum
+
+- name: configure neutron keystone_authtoken section
+  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf keystone_authtoken {{ item }}
+  with_items:
+    - auth_host {{ controller_ip }}
+    - auth_port 35357
+    - auth_protocol http
+    - signing_dir /var/lib/quantum/keystone-signing
+    - admin_tenant_name service
+    - admin_user quantum
+    - admin_password {{ quantum_pass }}
+
+- name: configure neutron l2 agent DEFAULT section
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini DEFAULT {{ item }}
+  with_items:
+    - debug False
+    - verbose True
+
+- name: configure neutron l2 agent DATABASE section
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini DATABASE {{ item }}
+  with_items:
+    - sql_connection mysql://quantum:"{{ quantum_db_pass }}"@{{ controller_ip }}/ovs_quantum?charset=utf8
+    - reconnect_interval 2
+
+- name: configure neutron l2 agent AGENT section
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini AGENT {{ item }}
+  with_items:
+    - polling_interval 2
+    - root_helper "sudo /usr/bin/quantum-rootwrap /etc/quantum/rootwrap.conf"
+
+- name: configure quantum l2 agent SECURITYGROUP section for OVS
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini SECURITYGROUP {{ item }}
+  with_items:
+    - firewall_driver quantum.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+- name: configure neutron l2 agent OVS section for VLANs
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini OVS {{ item }}
+  with_items:
+    - tenant_network_type vlan
+    - network_vlan_ranges internal:1000:1999
+    - bridge_mappings internal:br-{{ quantum_internal_interface }}
+  when: provider_network_type == "vlan"
+
+- name: configure neutron l2 agent OVS section for GRE
+  command: /usr/bin/openstack-config --set /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini OVS {{ item }}
+  with_items:
+    - tenant_network_type gre
+    - tunnel_id_ranges 1:1000
+    - enable_tunneling True
+    - local_ip {{ ansible_all_ipv4_addresses[0] }}
+  when: provider_network_type == "gre"
+
+# RHOS rpms creates the link: need to ignore it instead of forcing, that would break RPM config
+- name: create link to ovs_quantum_plugin.ini file
+  file: src=/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini dest=/etc/quantum/plugin.ini state=link
+  ignore_errors: True

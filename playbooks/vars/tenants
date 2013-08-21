@@ -1,0 +1,12 @@
+
+---
+# Tenants vars
+
+tenant: t1
+tenant_user: t1admin
+tenant_pass: t1
+tunnel_id: 1
+network_name: net1
+subnet_name: subnet1
+subnet_cidr: 1.1.1.0/24
+router_name: router1

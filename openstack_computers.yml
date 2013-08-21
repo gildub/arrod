@@ -1,0 +1,11 @@
+---
+# computers
+
+- hosts: openstack_computers
+  vars_files:
+    - group_vars/all
+  roles:
+    - openstack-compute-node
+    - openvswitch
+    - openstack-neutron-l2-agent
+

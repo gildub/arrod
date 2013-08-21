@@ -1,0 +1,46 @@
+---
+# Globals
+controller_fqdn: "{{ hostvars[groups['openstack_controllers'][0]].ansible_fqdn }}"
+controller_ip: "{{ hostvars[groups['openstack_controllers'][0]].ansible_all_ipv4_addresses[0] }}"
+migrate: False
+
+# Mysql
+mysql_root_pass: CHANGEME
+
+# Default admin tenant
+admin_tenant: admin
+admin_tenant_user: admin
+admin_pass: CHANGEME
+service_pass: CHANGEME
+
+## Keystone
+keystone_db_pass: keystone
+keystone_admin_token: CHANGEME
+
+## Glance
+glance_db_pass: CHANGEME
+glance_filesystem_store_datadir: /var/lib/glance/images/
+
+## Nova
+nova_db_pass: CHANGEME
+# For nested virtualisation, use
+# nova_libvirt_type: qemu
+nova_libvirt_type: kvm
+
+## Cinder
+cinder_db_pass: CHANGEME
+cinder_volume_dev: /dev/sda3
+
+## Neutron
+quantum_db_pass: CHANGEME
+# Service tenant
+quantum_pass: CHANGEME
+
+quantum_metadata_proxy_shared_secret: secret
+quantum_external_interface: eth0
+quantum_internal_interface: eth1
+splinters: False
+network_namespaces: True
+
+# GRE Tunnels or VLANs - Must be either "gre" or "vlan"
+provider_network_type: gre
