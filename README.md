@@ -28,7 +28,7 @@ How To
          * Fedora repo
        * Controller node(s) must have partition allocated for Cinder
      * If using RHOS, also consult README-RHOS30
-  2. Copy Ansible definitions to some directory:
+  2. Copy Ansible definitions to some directory:  
      `git clone https://github.com/gildub/arrod openstack`  
      `cd openstack`  
      `git checkout grizzly`
