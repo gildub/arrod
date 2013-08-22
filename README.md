@@ -29,8 +29,8 @@ How To
        * Controller node(s) must have partition allocated for Cinder
      * If using RHOS, also consult README-RHOS30
   2. Copy Ansible definitions to some directory:
-     `git clone https://github.com/gildub/arrod openstack` 
-     `cd openstack` 
+     `git clone https://github.com/gildub/arrod openstack`  
+     `cd openstack`  
      `git checkout grizzly`
   3. Create a `your-hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
@@ -41,7 +41,7 @@ How To
        N x controller(s), N x network node(s), N x compute node(s)
   4. Edit group_vars values:
      * Passwords and secrets keys
-     * Change `cinder_volume_dev` key accordingly
+     * Change `cinder_volume_dev` key accordingly with partition path and name
      * Neutron
        * Set `quantum_external_interface` and `quantum_internal_interface` keys, see Assumptions above
        * VLANs
