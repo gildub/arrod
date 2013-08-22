@@ -24,7 +24,7 @@
     - signing_dir /var/lib/neutron/keystone-signing
     - admin_tenant_name service
     - admin_user neutron
-    - admin_password {{ neutron_pass }}
+    - admin_password {{ neutron_service_pass }}
 
 - name: configure neutron l2 agent DEFAULT section
   command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini DEFAULT {{ item }}

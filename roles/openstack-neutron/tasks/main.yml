@@ -23,7 +23,7 @@
   keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" tenant=service tenant_description="Service Tenant" 
 
 - name: add neutron user for service tenant
-  keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" user=neutron tenant=service password={{ neutron_pass }}
+  keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" user=neutron tenant=service password={{ neutron_service_pass }}
 
 - name: add neutron user role for service tenant
   keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" role=admin user=neutron tenant=service

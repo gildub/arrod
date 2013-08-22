@@ -33,8 +33,7 @@ cinder_volume_dev: /dev/sda3
 
 ## Neutron
 neutron_db_pass: CHANGEME
-# Service tenant
-neutron_pass: CHANGEME
+neutron_service_pass: CHANGEME
 
 neutron_metadata_proxy_shared_secret: secret
 neutron_external_interface: eth0

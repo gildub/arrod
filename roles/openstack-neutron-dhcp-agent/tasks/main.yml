@@ -24,7 +24,7 @@
     - auth_url http://{{ controller_ip }}:35357/v2.0/
     - admin_tenant_name service
     - admin_username neutron
-    - admin_password {{ neutron_pass }}
+    - admin_password {{ neutron_service_pass }}
     - ovs_use_veth True
     - debug False
     - verbose True

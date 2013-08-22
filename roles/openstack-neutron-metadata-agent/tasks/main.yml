@@ -9,7 +9,7 @@
   with_items:
     - nova_metadata_ip {{ controller_ip }}
     - admin_user neutron
-    - admin_password {{ neutron_pass }}
+    - admin_password {{ neutron_service_pass }}
     - admin_tenant_name service
     - auth_url http://{{ controller_ip }}:35357/v2.0/
     - metadata_proxy_shared_secret {{ neutron_metadata_proxy_shared_secret }}
