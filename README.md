@@ -1,4 +1,5 @@
 Ansible plays to deploy OpenStack Havana with Neutron(Quantum) on RHEL 6.4+ or Fedora 19+
+For OpenStack Grizzly deployments, please checkout grizlly branch
 
 **Notes**  
 This work was initialy based from [ansible-openstack](https://github.com/ansible/ansible-redhat-openstack).  
