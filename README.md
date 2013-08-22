@@ -1,4 +1,3 @@
-
 Intro
 =====
 Ansible plays to deploy OpenStack Havana with Neutron(Quantum) on RHEL 6.4+ or Fedora 19+
@@ -6,11 +5,13 @@ For OpenStack Grizzly deployments, please checkout grizlly branch
 
 Status
 ======
-**Development**
-Fedora19+, RHEL6.4+ not tested at all
+Development
+-----------  
+Fedora19+, RHEL6.4+ not tested at all  
 RHOS40: Check README-RHOS40
 
-**Stable**
+Stable
+------
 Use grizzly branch
 
 Notes
@@ -28,7 +29,8 @@ Assumptions
      * eth1 is always external network 
      * eth2 is always internal/data network 
 
-**How To**  
+How To
+====== 
   1.  Requirements
       * Ansible 1.2+ installed (epel6 for RHEL) on a system having ssh access to all your OpenStack target host(s)
       * Targetted hosts must have
@@ -64,5 +66,4 @@ Assumptions
         `# cd openstack`  
         `# ansible-playbooks -i ../your-hosts site.yml`
      3. If it fails, address issue according to the message and re-run Ansible: wash, rince and repeat!
-
 
