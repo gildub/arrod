@@ -3,7 +3,7 @@
 
 - name: install openstack nova
   yum: name=openstack-nova state=installed
-  
+
 - name: setup nova database
   command: /usr/bin/openstack-db --init --service nova -p {{ nova_db_pass }} -r "{{ mysql_root_pass }}" -y
            creates=/var/lib/mysql/nova

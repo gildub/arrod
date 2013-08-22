@@ -12,8 +12,8 @@
   with_items:
     - mysqld
 
-- name: set root passwd
+- name: set mysql root passwd
   command: /usr/bin/mysqladmin -u root password {{ mysql_root_pass }}
 
-- name: set root my.cnf
+- name: set mysql root my.cnf
   template: src=my.cnf.j2 dest=/root/.my.cnf
