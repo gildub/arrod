@@ -1,16 +1,16 @@
 Intro
-=====
+-----
 Ansible plays to deploy OpenStack Grizzly with Neutron(Quantum) on RHEL 6.4+ or Fedora 19+
 
 Notes
-=====
+-----
 This work was initialy based from [ansible-openstack](https://github.com/ansible/ansible-redhat-openstack).  
 Because of different deployment needs, for multi nodes approach, it has been almost entirely revisited.  
 Ultimately they will be merged back together.  
 Storage and HA are not supported yet but working on it.
 
 Assumptions
-===========
+-----------
   1. Using 2 physical networks
   2. A consistent network interface naming and configuration accross the environment.  
      For instance:
@@ -18,19 +18,19 @@ Assumptions
      * eth2 is always internal/data network 
 
 How To
-======
-  1.  Requirements
-      * Ansible 1.2+ installed (epel6 for RHEL) on a system having ssh access to all your OpenStack target host(s)
-      * Targetted hosts must have
-        * RHEL6.4+ or Fedora 19+ installed
-        * Either OpenStack repos
-          * RHEL: [RDO repo](repos.fedorapeople.org/repos/openstack/) or RHOS 3.0 channel
-          * Fedora repo
-        * Controller node(s) must have partition allocated for Cinder
-      * If using RHOS, also consult README-RHOS30
+------
+  1. Requirements
+     * Ansible 1.2+ installed (epel6 for RHEL) on a system having ssh access to all your OpenStack target host(s)
+     * Targetted hosts must have
+       * RHEL6.4+ or Fedora 19+ installed
+       * Either OpenStack repos
+         * RHEL: [RDO repo](repos.fedorapeople.org/repos/openstack/) or RHOS 3.0 channel
+         * Fedora repo
+       * Controller node(s) must have partition allocated for Cinder
+     * If using RHOS, also consult README-RHOS30
   2. Copy Ansible definitions to some directory:
-     `git clone https://github.com/gildub/arrod openstack`
-     `cd openstack`
+     `git clone https://github.com/gildub/arrod openstack` 
+     `cd openstack` 
      `git checkout grizzly`
   3. Create a `your-hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
