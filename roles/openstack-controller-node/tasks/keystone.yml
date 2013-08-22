@@ -45,7 +45,7 @@
          CONTROLLER_PUBLIC_ADDRESS={{ ansible_default_ipv4.address }}
          CONTROLLER_ADMIN_ADDRESS={{ ansible_default_ipv4.address }} 
          CONTROLLER_INTERNAL_ADDRESS={{ ansible_default_ipv4.address }}
-         /usr/share/keystone/sample_data.sh
+         /usr/share/openstack-keystone/sample_data.sh
 
 - name: Create admin keystonerc file
   template: src=keystonerc.j2 dest=/root/keystonerc mode=0755
