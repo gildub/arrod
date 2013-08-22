@@ -1,19 +1,24 @@
+Intro
+=====
 Ansible plays to deploy OpenStack Grizzly with Neutron(Quantum) on RHEL 6.4+ or Fedora 19+
 
-**Notes**  
+Notes
+=====
 This work was initialy based from [ansible-openstack](https://github.com/ansible/ansible-redhat-openstack).  
 Because of different deployment needs, for multi nodes approach, it has been almost entirely revisited.  
 Ultimately they will be merged back together.  
 Storage and HA are not supported yet but working on it.
 
-**Assumptions** 
+Assumptions
+===========
   1. Using 2 physical networks
   2. A consistent network interface naming and configuration accross the environment.  
      For instance:
      * eth1 is always external network 
      * eth2 is always internal/data network 
 
-**How To**  
+How To
+======
   1.  Requirements
       * Ansible 1.2+ installed (epel6 for RHEL) on a system having ssh access to all your OpenStack target host(s)
       * Targetted hosts must have
@@ -25,6 +30,8 @@ Storage and HA are not supported yet but working on it.
       * If using RHOS, also consult README-RHOS30
   2. Copy Ansible definitions to some directory:
      `git clone https://github.com/gildub/arrod openstack`
+     `cd openstack`
+     `git checkout grizzly`
   3. Create a `your-hosts` inventory file, use hosts-examples directory for templates:
      * All in one:  
        1 x Controller/Network/Compute node 
