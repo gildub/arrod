@@ -52,9 +52,9 @@ How To
   5. Deploy
      1. From the ansible installed system, make sure you have ssh access to all hosts  
         For instance have an ssh key installed on all hosts and use ssh-agent
-     2. Run Ansible using inventory file created above from the definitions directory:  
-        `# cd openstack`  
-        `# ansible-playbooks -i ../your-hosts site.yml`
+     2. Run Ansible, using inventory file created above:  
+        `cd openstack`  
+        `ansible-playbooks -i ../your-hosts site.yml`
      3. If it fails, address issue according to the message and re-run Ansible: wash, rince and repeat!
 
 
