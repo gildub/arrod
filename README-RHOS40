@@ -1,0 +1,12 @@
+# RHOS40
+Glance
+------
+Following RPMs conflict about /usr/share/man/man1/glance.1.gz:
+- python-glanceclient-0.10.0-1.el6ost.noarch 
+- openstack-glance-2013.2-0.6.b2.el6ost.noarch.rpm
+
+Workaround: 
+Prior to running ansible-playbook run following on glance hosts:
+# yum install python-cinderclient pysendfile python-crypto python-glance python-glanceclient  python-httplib2 python-jsonschema  python-swiftclient python-warlock pyxattr
+Then download openstack-glance-2013.2-0.6.b2.el6ost.noarch.rpm and force it
+# rpm -ivh --force openstack-glance-2013.2-0.6.b2.el6ost.noarch.rpm
