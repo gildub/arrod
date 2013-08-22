@@ -4,14 +4,14 @@
 - name: configure nova for neutron service
   command: /usr/bin/openstack-config --set /etc/nova/nova.conf DEFAULT {{ item }}
   with_items:
-    - network_api_class nova.network.quantumv2.api.API
-    - quantum_admin_username admin
-    - quantum_admin_password {{ admin_pass }}
-    - quantum_admin_auth_url http://{{ controller_ip }}:35357/v2.0
-    - quantum_auth_strategy keystone
-    - quantum_admin_tenant_name admin
-    - quantum_url http://{{ controller_ip }}:9696
-    - security_group_api quantum
+    - network_api_class nova.network.neutronv2.api.API
+    - neutron_admin_username admin
+    - neutron_admin_password {{ admin_pass }}
+    - neutron_admin_auth_url http://{{ controller_ip }}:35357/v2.0
+    - neutron_auth_strategy keystone
+    - neutron_admin_tenant_name admin
+    - neutron_url http://{{ controller_ip }}:9696
+    - security_group_api neutron
     - firewall_driver nova.virt.firewall.NoopFirewallDriver
   delegate_to: "{{ controller_ip }}"
 

@@ -2,39 +2,39 @@
 # Tasks for openstack networking dhcp agent
 
 # RDO and RHOS to re-packaged for better granularity
-- name: install quantum
-  yum: name=openstack-quantum
+- name: install neutron
+  yum: name=openstack-neutron
 
-- name: configure quantum 
-  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf DEFAULT {{ item }}
+- name: configure neutron 
+  command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf DEFAULT {{ item }}
   with_items:
-    - core_plugin quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2
-    - control_exchange quantum
+    - core_plugin neutron.plugins.openvswitch.ovs_neutron_plugin.OVSneutronPluginV2
+    - control_exchange neutron
     - qpid_hostname {{ controller_ip }}
-    - rpc_backend quantum.openstack.common.rpc.impl_qpid
+    - rpc_backend neutron.openstack.common.rpc.impl_qpid
     - notification_topics notifications
 
 - name: allow overlapping subnets
-  command: /usr/bin/openstack-config --set /etc/quantum/quantum.conf DEFAULT allow_overlapping_ips True
+  command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips True
 
 - name: configure common device manager options
-  command: /usr/bin/openstack-config --set /etc/quantum/dhcp_agent.ini DEFAULT {{ item }}
+  command: /usr/bin/openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT {{ item }}
   with_items:
-    - interface_driver quantum.agent.linux.interface.OVSInterfaceDriver
+    - interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
     - auth_url http://{{ controller_ip }}:35357/v2.0/
     - admin_tenant_name service
-    - admin_username quantum
-    - admin_password {{ quantum_pass }}
+    - admin_username neutron
+    - admin_password {{ neutron_pass }}
     - ovs_use_veth True
     - debug False
     - verbose True
 
 - name: configure dhcp agent
-  command: /usr/bin/openstack-config --set /etc/quantum/dhcp_agent.ini DEFAULT {{ item }}
+  command: /usr/bin/openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT {{ item }}
   with_items:
-  - dhcp_driver quantum.agent.linux.dhcp.Dnsmasq
-  - root_helper "sudo /usr/bin/quantum-rootwrap /etc/quantum/rootwrap.conf"
+  - dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
+  - root_helper "sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf"
   - use_namespaces True
 
 - name: activate dhcp agent
-  service: name=quantum-dhcp-agent state=started enabled=yes
+  service: name=neutron-dhcp-agent state=started enabled=yes

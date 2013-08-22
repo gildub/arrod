@@ -1,35 +1,35 @@
 ---
-# Tasks for openstack quantum l3 agent
+# Tasks for openstack neutron l3 agent
 
 - name: install keystone client
   yum: name=python-keystoneclient 
 
 # RDO and RHOS to be re-packaged with more granularity
-- name: install quantum
-  yum: name=openstack-quantum state=present
+- name: install neutron
+  yum: name=openstack-neutron state=present
 
 - include: ovs-external-bridge.yml
 
 - name: configure l3 agent common device manager options
-  command: /usr/bin/openstack-config --set /etc/quantum/l3_agent.ini DEFAULT {{ item }}
+  command: /usr/bin/openstack-config --set /etc/neutron/l3_agent.ini DEFAULT {{ item }}
   with_items:
     - auth_url http://{{ controller_ip }}:35357/v2.0/
     - admin_tenant_name service
-    - admin_username quantum
-    - admin_password {{ quantum_pass }}
-    - interface_driver quantum.agent.linux.interface.OVSInterfaceDriver
+    - admin_username neutron
+    - admin_password {{ neutron_pass }}
+    - interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
     - ovs_use_veth True
     - debug False
     - verbose True
 
 - name: configure l3 agent 
-  command: /usr/bin/openstack-config --set /etc/quantum/l3_agent.ini DEFAULT {{ item }}
+  command: /usr/bin/openstack-config --set /etc/neutron/l3_agent.ini DEFAULT {{ item }}
   with_items:
     - use_namespaces True
     - external_network_bridge br-ex
-    - root_helper "sudo /usr/bin/quantum-rootwrap /etc/quantum/rootwrap.conf"
+    - root_helper "sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf"
     # - router_id <id>
     # - gateway_external_network_id <id>
 
 - name: activate l3 agent
-  service: name=quantum-l3-agent state=started enabled=yes
+  service: name=neutron-l3-agent state=started enabled=yes

@@ -1,6 +1,6 @@
-DEVICE={{ quantum_internal_interface }}
+DEVICE={{ neutron_internal_interface }}
 DEVICETYPE=ovs
 TYPE=OVSPort
-OVS_BRIDGE=br-{{ quantum_internal_interface }}
+OVS_BRIDGE=br-{{ neutron_internal_interface }}
 ONBOOT=yes
 BOOTPROTO=none

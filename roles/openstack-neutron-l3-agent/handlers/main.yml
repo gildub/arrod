@@ -1,6 +1,6 @@
 ---
-# Handlers for the Quantum L3 Agent plays
+# Handlers for Neutron L3 Agent plays
 
 - name: restart network l3 agent
-  service: name=quantum-l3-agent state=restarted 
+  service: name=neutron-l3-agent state=restarted 
 

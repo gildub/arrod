@@ -1,7 +1,7 @@
 Intro
 -----
-Ansible plays to deploy OpenStack Havana with Neutron(Quantum) on RHEL 6.4+ or Fedora 19+
-For OpenStack Grizzly deployments, please checkout grizlly branch
+Ansible plays to deploy OpenStack Havana with Neutron on RHEL 6.4+ or Fedora 19+  
+For OpenStack Grizzly deployments, please use grizlly branch
 
 Status
 ------
@@ -10,7 +10,7 @@ Status
   RHOS40: Check README-RHOS40
 
 * Stable
-  Use grizzly branch
+  Checkout grizzly branch
 
 Notes
 -----
@@ -51,7 +51,7 @@ How To
      * Passwords and secrets keys
      * Change `cinder_volume_dev` key accordingly with partition path and name
      * Neutron
-       * Set `quantum_external_interface` and `quantum_internal_interface` keys, see Assumptions above
+       * Set `neutron_external_interface` and `neutron_internal_interface` keys, see Assumptions above
        * VLANs
          * Set `provider_network_type: vlan`
          * Set `splinters: True` if [needed](https://access.redhat.com/site/articles/289823)

@@ -1,24 +1,24 @@
 ---
 # Tasks for openstack neutron l2 agent service
 
-# openstack-quantum rpm required as well
+# openstack-neutron rpm required as well
 - name: install neutron l2 agent
   yum: name={{ item }} state=present
   with_items:
-    - openstack-quantum
-    - openstack-quantum-openvswitch
+    - openstack-neutron
+    - openstack-neutron-openvswitch
 
 - include: plugin-config.yml
 
 - name: activate neutron l2 agent
   service: name={{ item }} state=restarted
   with_items:
-    - quantum-openvswitch-agent
-    - quantum-ovs-cleanup
+    - neutron-openvswitch-agent
+    - neutron-ovs-cleanup
 
 - include: ovs-integration-bridge.yml
 
 - include: ovs-internal-bridge.yml
 
 - name: restart l2 agent
-  service: name=quantum-openvswitch-agent state=restarted
+  service: name=neutron-openvswitch-agent state=restarted

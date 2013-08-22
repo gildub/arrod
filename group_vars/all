@@ -32,13 +32,13 @@ cinder_db_pass: CHANGEME
 cinder_volume_dev: /dev/sda3
 
 ## Neutron
-quantum_db_pass: CHANGEME
+neutron_db_pass: CHANGEME
 # Service tenant
-quantum_pass: CHANGEME
+neutron_pass: CHANGEME
 
-quantum_metadata_proxy_shared_secret: secret
-quantum_external_interface: eth0
-quantum_internal_interface: eth1
+neutron_metadata_proxy_shared_secret: secret
+neutron_external_interface: eth0
+neutron_internal_interface: eth1
 splinters: False
 network_namespaces: True
 

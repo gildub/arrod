@@ -1,4 +1,4 @@
-DEVICE={{ quantum_external_interface }}
+DEVICE={{ neutron_external_interface }}
 DEVICETYPE=ovs
 TYPE=OVSPort
 BOOTPROTO=none
