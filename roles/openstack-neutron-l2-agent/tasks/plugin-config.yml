@@ -16,7 +16,7 @@
 #    - control_exchange neutron
 
 - name: configure neutron service database section
-  command: /usr/bin/openstack-config --set /etc/neutron/netron.conf database {{ item }}
+  command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf database {{ item }}
   with_items:
     - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
     - retry_interval 2
