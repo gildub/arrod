@@ -1,7 +1,7 @@
 ---
 # Tasks for the base controller node
 
-- name: Install some base packages
+- name: install openstack utils packages
   yum: name={{ item }} state=installed
   with_items: 
    - openstack-utils

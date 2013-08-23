@@ -1,7 +1,7 @@
 ---
 # Tasks for openstack neutron l2 agent configuration
 
-- name: configure neutron DEFAULT section
+- name: configure neutron service DEFAULT section
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf DEFAULT {{ item }}
   with_items:
     - core_plugin neutron.plugins.openvswitch.ovs_neutron_plugin.OVSneutronPluginV2
@@ -14,6 +14,30 @@
     - qpid_hostname {{ controller_ip }}
     - verbose True
 #    - control_exchange neutron
+
+- name: configure neutron service database section
+  command: /usr/bin/openstack-config --set /etc/neutron/netron.conf database {{ item }}
+  with_items:
+    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
+    - retry_interval 2
+
+- name: configure neutron service quotas section
+  command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf quotas {{ item }}
+  with_items:
+    # resource name(s) that are supported in quota features
+    - quota_items = network,subnet,port
+    # default number of resource allowed per tenant, minus for unlimited
+    - default_quota -1
+    # number of networks allowed per tenant, and minus means unlimited
+    - quota_network 10
+    # number of subnets allowed per tenant, and minus means unlimited
+    - quota_subnet 10
+    # number of ports allowed per tenant, and minus means unlimited
+    - quota_port 50
+    # number of security groups allowed per tenant, and minus means unlimited
+    - quota_security_group 10
+    # number of security group rules allowed per tenant, and minus means unlimited
+    - quota_security_group_rule 100
 
 - name: configure neutron keystone_authtoken section
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf keystone_authtoken {{ item }}
@@ -32,41 +56,44 @@
     - debug False
     - verbose True
 
-- name: configure neutron l2 agent DATABASE section
-  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini DATABASE {{ item }}
+- name: configure neutron l2 agent database section
+  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini database {{ item }}
   with_items:
-    - sql_connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
-    - reconnect_interval 2
+    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
 
-- name: configure neutron l2 agent AGENT section
-  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini AGENT {{ item }}
+- name: configure neutron l2 agent agent section
+  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini agent {{ item }}
   with_items:
     - polling_interval 2
     - root_helper "sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf"
 
-- name: configure neutron l2 agent SECURITYGROUP section for OVS
-  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini SECURITYGROUP {{ item }}
+- name: configure neutron l2 agent securitygroup section for ovs
+  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini securitygroup {{ item }}
   with_items:
     - firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 
-- name: configure neutron l2 agent OVS section for VLANs
-  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini OVS {{ item }}
+- name: configure neutron l2 agent ovssection for VLANs
+  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini ovs {{ item }}
   with_items:
     - tenant_network_type vlan
     - network_vlan_ranges internal:1000:1999
     - bridge_mappings internal:br-{{ neutron_internal_interface }}
   when: provider_network_type == "vlan"
 
-- name: configure neutron l2 agent OVS section for GRE
-  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini OVS {{ item }}
+- name: configure neutron l2 agent ovssection for GRE
+  command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini ovs {{ item }}
   with_items:
     - tenant_network_type gre
     - tunnel_id_ranges 1:1000
-    - enable_tunneling True
     - local_ip {{ ansible_all_ipv4_addresses[0] }}
+    # To be deprecated,
+    - enable_tunneling True
+    # and replaced by:
+    # tunnel_type gre
   when: provider_network_type == "gre"
 
 # RHOS rpms creates the link: need to ignore it instead of forcing, that would break RPM config
 - name: create link to ovs_neutron_plugin.ini file
   file: src=/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini dest=/etc/neutron/plugin.ini state=link
   ignore_errors: True
+

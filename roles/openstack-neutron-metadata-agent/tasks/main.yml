@@ -1,17 +1,18 @@
 ---
 # Task for openstack networking metadata agent
-# RDO and RHOS to be re-packaged for better granularity
+
 - name: install neutron
   yum: name=openstack-neutron
 
 - name: configure metadata agent  
   command: /usr/bin/openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT {{ item }}
   with_items:
-    - nova_metadata_ip {{ controller_ip }}
+    - auth_url http://{{ controller_ip }}:35357/v2.0/
+    - auth_region RegionOne
+    - admin_tenant_name service
     - admin_user neutron
     - admin_password {{ neutron_service_pass }}
-    - admin_tenant_name service
-    - auth_url http://{{ controller_ip }}:35357/v2.0/
+    - nova_metadata_ip {{ controller_ip }}
     - metadata_proxy_shared_secret {{ neutron_metadata_proxy_shared_secret }}
 
 - name: configure nova for openstack networking metadata agent

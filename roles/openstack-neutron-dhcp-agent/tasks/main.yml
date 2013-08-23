@@ -17,24 +17,15 @@
 - name: allow overlapping subnets
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips True
 
-- name: configure common device manager options
-  command: /usr/bin/openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT {{ item }}
-  with_items:
-    - interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
-    - auth_url http://{{ controller_ip }}:35357/v2.0/
-    - admin_tenant_name service
-    - admin_username neutron
-    - admin_password {{ neutron_service_pass }}
-    - ovs_use_veth True
-    - debug False
-    - verbose True
-
 - name: configure dhcp agent
   command: /usr/bin/openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT {{ item }}
   with_items:
-  - dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
-  - root_helper "sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf"
-  - use_namespaces True
+    - debug False
+    - verbose True
+    - interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
+    - dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
+    - ovs_use_veth True
+    - use_namespaces True
 
 - name: activate dhcp agent
   service: name=neutron-dhcp-agent state=started enabled=yes
