@@ -4,8 +4,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from openstack_dashboard import exceptions
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+# Required for Django 1.5.
+# If horizon is running in production (DEBUG is False), set this
+# with the list of host/domain names that the application can serve.
+# For more information see:
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+#ALLOWED_HOSTS = ['horizon.example.com', ]
 
 # Set SSL proxy settings:
 # For Django 1.4+ pass this header from the proxy after terminating the SSL,
@@ -18,6 +25,27 @@ TEMPLATE_DEBUG = DEBUG
 # settings to better secure the cookies from security exploits
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = True
+
+# Overrides for OpenStack API versions. Use this setting to force the
+# OpenStack dashboard to use a specfic API version for a given service API.
+# NOTE: The version should be formatted as it appears in the URL for the
+# service API. For example, The identity service APIs have inconsistent
+# use of the decimal point, so valid options would be "2.0" or "3".
+# OPENSTACK_API_VERSIONS = {
+#     "identity": 3
+# }
+
+# Set this to True if running on multi-domain model. When this is enabled, it
+# will require user to enter the Domain name in addition to username for login.
+# OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
+
+# Overrides the default domain used when running on single-domain model
+# with Keystone V3. All entities will be created in the default domain.
+# OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
+
+# Set Console type:
+# valid options would be "AUTO", "VNC" or "SPICE"
+# CONSOLE_TYPE = "AUTO"
 
 # Default OpenStack Dashboard configuration.
 HORIZON_CONFIG = {
@@ -60,24 +88,24 @@ LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 # behind a load-balancer). Either you have to make sure that a session gets all
 # requests routed to the same dashboard instance or you set the same SECRET_KEY
 # for all of them.
-# from horizon.utils import secret_key
-SECRET_KEY = "SECRETHORIZON"
+from horizon.utils import secret_key
+SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH, '.secret_key_store'))
 
 # We recommend you use memcached for development; otherwise after every reload
 # of the django development server, you will have to login again. To use
 # memcached set CACHES to something like
-CACHES = {
-    'default': {
-        'BACKEND' : 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION' : '127.0.0.1:11211',
-    }
-}
-
-#CACHES = {
+# CACHES = {
 #    'default': {
-#        'BACKEND' : 'django.core.cache.backends.locmem.LocMemCache'
+#        'BACKEND' : 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION' : '127.0.0.1:11211',
 #    }
 #}
+
+CACHES = {
+    'default': {
+        'BACKEND' : 'django.core.cache.backends.locmem.LocMemCache'
+    }
+}
 
 # Send email to the console by default
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -112,11 +140,14 @@ OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"
 OPENSTACK_KEYSTONE_BACKEND = {
     'name': 'native',
     'can_edit_user': True,
-    'can_edit_project': True
+    'can_edit_group': True,
+    'can_edit_project': True,
+    'can_edit_domain': True,
+    'can_edit_role': True
 }
 
 OPENSTACK_HYPERVISOR_FEATURES = {
-    'can_set_mount_point': False,
+    'can_set_mount_point': True,
 
     # NOTE: as of Grizzly this is not yet supported in Nova so enabling this
     # setting will not do anything useful
@@ -124,16 +155,24 @@ OPENSTACK_HYPERVISOR_FEATURES = {
 }
 
 # The OPENSTACK_NEUTRON_NETWORK settings can be used to enable optional
-# services provided by quantum.  Currently only the load balancer service
+# services provided by neutron.  Currently only the load balancer service
 # is available.
 OPENSTACK_NEUTRON_NETWORK = {
-    'enable_lb': False
+    'enable_security_group': True,
+    'enable_lb': False,
 }
 
 # OPENSTACK_ENDPOINT_TYPE specifies the endpoint type to use for the endpoints
 # in the Keystone service catalog. Use this setting when Horizon is running
-# external to the OpenStack environment. The default is 'internalURL'.
+# external to the OpenStack environment. The default is 'publicURL'.
 #OPENSTACK_ENDPOINT_TYPE = "publicURL"
+
+# SECONDARY_ENDPOINT_TYPE specifies the fallback endpoint type to use in the
+# case that OPENSTACK_ENDPOINT_TYPE is not present in the endpoints
+# in the Keystone service catalog. Use this setting when Horizon is running
+# external to the OpenStack environment. The default is None.  This
+# value should differ from OPENSTACK_ENDPOINT_TYPE if used.
+#SECONDARY_ENDPOINT_TYPE = "publicURL"
 
 # The number of objects (Swift containers/objects or images) to display
 # on a single page before providing a paging element (a "more" link)
@@ -144,6 +183,16 @@ API_RESULT_PAGE_SIZE = 20
 # The timezone of the server. This should correspond with the timezone
 # of your entire OpenStack installation, and hopefully be in UTC.
 TIME_ZONE = "UTC"
+
+# When launching an instance, the menu of available flavors is
+# sorted by RAM usage, ascending.  Provide a callback method here
+# (and/or a flag for reverse sort) for the sorted() method if you'd
+# like a different behaviour.  For more info, see
+# http://docs.python.org/2/library/functions.html#sorted
+# CREATE_INSTANCE_FLAVOR_SORT = {
+#     'key': my_awesome_callback_method,
+#     'reverse': False,
+# }
 
 LOGGING = {
     'version': 1,
@@ -186,6 +235,10 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False,
         },
+        'cinderclient': {
+            'handlers': ['console'],
+            'propagate': False,
+        },
         'keystoneclient': {
             'handlers': ['console'],
             'propagate': False,
@@ -194,9 +247,118 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False,
         },
+        'heatclient': {
+            'handlers': ['console'],
+            'propagate': False,
+        },
         'nose.plugins.manager': {
             'handlers': ['console'],
             'propagate': False,
         }
     }
+}
+
+SECURITY_GROUP_RULES = {
+    'all_tcp': {
+        'name': 'ALL TCP',
+        'ip_protocol': 'tcp',
+        'from_port': '1',
+        'to_port': '65535',
+    },
+    'all_udp': {
+        'name': 'ALL UDP',
+        'ip_protocol': 'udp',
+        'from_port': '1',
+        'to_port': '65535',
+    },
+    'all_icmp': {
+        'name': 'ALL ICMP',
+        'ip_protocol': 'icmp',
+        'from_port': '-1',
+        'to_port': '-1',
+    },
+    'ssh': {
+        'name': 'SSH',
+        'ip_protocol': 'tcp',
+        'from_port': '22',
+        'to_port': '22',
+    },
+    'smtp': {
+        'name': 'SMTP',
+        'ip_protocol': 'tcp',
+        'from_port': '25',
+        'to_port': '25',
+    },
+    'dns': {
+        'name': 'DNS',
+        'ip_protocol': 'tcp',
+        'from_port': '53',
+        'to_port': '53',
+    },
+    'http': {
+        'name': 'HTTP',
+        'ip_protocol': 'tcp',
+        'from_port': '80',
+        'to_port': '80',
+    },
+    'pop3': {
+        'name': 'POP3',
+        'ip_protocol': 'tcp',
+        'from_port': '110',
+        'to_port': '110',
+    },
+    'imap': {
+        'name': 'IMAP',
+        'ip_protocol': 'tcp',
+        'from_port': '143',
+        'to_port': '143',
+    },
+    'ldap': {
+        'name': 'LDAP',
+        'ip_protocol': 'tcp',
+        'from_port': '389',
+        'to_port': '389',
+    },
+    'https': {
+        'name': 'HTTPS',
+        'ip_protocol': 'tcp',
+        'from_port': '443',
+        'to_port': '443',
+    },
+    'smtps': {
+        'name': 'SMTPS',
+        'ip_protocol': 'tcp',
+        'from_port': '465',
+        'to_port': '465',
+    },
+    'imaps': {
+        'name': 'IMAPS',
+        'ip_protocol': 'tcp',
+        'from_port': '993',
+        'to_port': '993',
+    },
+    'pop3s': {
+        'name': 'POP3S',
+        'ip_protocol': 'tcp',
+        'from_port': '995',
+        'to_port': '995',
+    },
+    'ms_sql': {
+        'name': 'MS SQL',
+        'ip_protocol': 'tcp',
+        'from_port': '1443',
+        'to_port': '1443',
+    },
+    'mysql': {
+        'name': 'MYSQL',
+        'ip_protocol': 'tcp',
+        'from_port': '3306',
+        'to_port': '3306',
+    },
+    'rdp': {
+        'name': 'RDP',
+        'ip_protocol': 'tcp',
+        'from_port': '3389',
+        'to_port': '3389',
+    },
 }
