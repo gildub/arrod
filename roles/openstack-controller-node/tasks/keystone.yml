@@ -1,7 +1,7 @@
 ---
 # Tasks for the keystone controller node
 
-- name: Install OpenStack keystone  packages.
+- name: install OpenStack keystone packages.
   yum: name={{ item }} state=installed
   with_items: 
    - openstack-keystone
