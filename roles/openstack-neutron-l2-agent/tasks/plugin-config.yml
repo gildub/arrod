@@ -4,7 +4,7 @@
 - name: configure neutron service DEFAULT section
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf DEFAULT {{ item }}
   with_items:
-    - core_plugin neutron.plugins.openvswitch.ovs_neutron_plugin.OVSneutronPluginV2
+    - core_plugin neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2
     - auth_strategy keystone
     - rpc_backend neutron.openstack.common.rpc.impl_qpid
     - notification_driver neutron.openstack.common.notifier.log_notifier

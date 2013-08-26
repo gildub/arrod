@@ -28,9 +28,6 @@
 - name: add neutron user role for service tenant
   keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" role=admin user=neutron tenant=service
 
-- name: copy keystonerc file for service tenant
-  template: src=keystonerc.j2 dest=/root/keystonerc_service mode=0755
-
 - include: nova-config.yml
 
 - name: restart nova on controller
