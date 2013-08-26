@@ -47,9 +47,8 @@
   shell: creates=/etc/keystone/ssl/certs/ca.pem
          /usr/bin/keystone-manage pki_setup  --keystone-user keystone --keystone-group keystone; chmod 777 /var/lock
 
-# Might be obsolete
-#- name: Change ownership of all files to keystone
-#  file: path=/etc/keystone recurse=yes owner=keystone group=keystone state=directory
+- name: Change ownership of all files to keystone
+  file: path=/etc/keystone recurse=yes owner=keystone group=keystone state=directory
 
 # Migration
 - name: copy keystone mysql data
