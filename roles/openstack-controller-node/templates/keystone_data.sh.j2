@@ -246,9 +246,9 @@ keystone service-create --name=neutron \
                         --description="OpenStack Networking Service")
 if [[ -z "$DISABLE_ENDPOINTS" ]]; then
     keystone endpoint-create --region RegionOne --service-id $NEUTRON_SERVICE \
-        --publicurl   "http://$CONTROLLER_PUBLIC_ADDRESS:9696/v2/AUTH_\$(tenant_id)s" \
-        --adminurl    "http://$CONTROLLER_ADMIN_ADDRESS:9696/" \
-        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:9696/v2/AUTH_\$(tenant_id)s"
+        --publicurl   "http://$CONTROLLER_PUBLIC_ADDRESS:9696" \
+        --adminurl    "http://$CONTROLLER_ADMIN_ADDRESS:9696" \
+        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:9696"
 fi
 
 # create ec2 creds and parse the secret and access key returned

@@ -16,12 +16,12 @@
   mysql_user: name=neutron password={{ neutron_db_pass }} host=%
               priv=ovs_neutron.*:ALL state=present
 
-- name: grant sql neutron user from local IP
-  mysql_user: name=neutron password={{ neutron_db_pass }} host={{ controller_private_fqdn }}
-              priv=ovs_neutron.*:ALL state=present
-
 - name: grant sql neutron user from localhost
   mysql_user: name=neutron password={{ neutron_db_pass }} host=localhost
+              priv=ovs_neutron.*:ALL state=present
+
+- name: grant sql neutron user from local IP
+  mysql_user: name=neutron password={{ neutron_db_pass }} host={{ controller_private_fqdn }}
               priv=ovs_neutron.*:ALL state=present
 
 - include: nova-config.yml

@@ -1,7 +1,7 @@
 ---
 # Tasks for mysql role
 
-- name: Install mysql packages
+- name: install mysql packages
   yum: name={{ item }} state=installed
   with_items:
     - mysql-server
