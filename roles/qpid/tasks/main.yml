@@ -1,13 +1,13 @@
 ---
 # Tasks for qpid role
 
-- name: Install some base packages
+- name: install base packages for qpid
   yum: name={{ item }} state=installed
   with_items: 
    - qpid-cpp-client
    - qpid-cpp-server
 
-- name: start the services
+- name: activate qpid service
   service: name={{ item }} state=started enabled=yes
   with_items:
    - qpidd 

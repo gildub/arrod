@@ -1,13 +1,13 @@
 ---
 # Tasks for the keystone controller node
 
-- name: install OpenStack keystone packages.
+- name: install OpenStack keystone package
   yum: name={{ item }} state=installed
   with_items: 
    - openstack-keystone
    - python-keystoneclient
 
-- name: Setup DB for keystone
+- name: setup keystone database
   shell: creates=/var/lib/mysql/keystone /usr/bin/openstack-db --init --service keystone -p {{ keystone_db_pass }} -r "{{ mysql_root_pass }}" -y 
 
 # keystone.conf
@@ -43,11 +43,11 @@
   command: /usr/bin/openstack-config --set /etc/keystone/keystone.conf paste_deploy config_file keystone-paste.ini
 # End of keystone.conf
 
-- name: Create certs for the keystone
+- name: create certs for the keystone
   shell: creates=/etc/keystone/ssl/certs/ca.pem
          /usr/bin/keystone-manage pki_setup  --keystone-user keystone --keystone-group keystone; chmod 777 /var/lock
 
-- name: Change ownership of all files to keystone
+- name: change ownership of all files to keystone
   file: path=/etc/keystone recurse=yes owner=keystone group=keystone state=directory
 
 # Migration
@@ -60,7 +60,7 @@
   when: migrate
 # End Migration
 
-- name: DB sync for keystone
+- name: sync keystone database
   shell: /usr/bin/keystone-manage db_sync; touch /etc/keystone/db.synced
          creates=/etc/keystone/db.synced
 

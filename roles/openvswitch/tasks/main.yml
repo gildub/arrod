@@ -11,5 +11,5 @@
 - name: load openvswitch module
   command: /sbin/modprobe openvswitch 
 
-- name: start the openvswitch service.
+- name: activate openvswitch service
   service: name=openvswitch state=started

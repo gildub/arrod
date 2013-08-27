@@ -1,7 +1,7 @@
 ---
 # Tasks for the openstack virt compute nodes
 
-- name: Install the required virtualization packages
+- name: install virtualization packages
   yum: name={{ item }} state=installed
   with_items:
    - qemu-img
@@ -12,17 +12,17 @@
    - libvirt-python
    - libguestfs-tools
 
-- name: Configure qemu.conf in libvirt
+- name: configure qemu.conf in libvirt
   copy: src=qemu.conf.j2 dest=/etc/libvirt/qemu.conf
 
 - name: service libvirt start
   service: name=libvirtd state=started enabled=yes
 
-- name: Stop libvirt default network
+- name: stop libvirt default network
   command: /usr/bin/virsh net-destroy default 
   ignore_errors: True
 
-- name: Delete libvirt default network
+- name: delete libvirt default network
   command: /usr/bin/virsh net-undefine default  
   ignore_errors: True
 

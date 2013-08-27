@@ -1,7 +1,7 @@
 ---
 # Tasks for the openstack compute nodes
 
-- name: Install packages for openstack compute nodes
+- name: install openstack compute packages
   yum: name={{ item }} state=present
   with_items:
     - openstack-nova-compute 
@@ -37,10 +37,10 @@
     - firewall_driver nova.virt.firewall.NoopFirewallDriver
     - libvirt_vif_driver nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
 
-- name: Give permissions to lock folder
+- name: give permissions to lock folder
   file: path=/var/lock/ state=directory owner=root group=root mode=0777
 
-- name: Copy the modified file for key injection bug
+- name: copy the modified file for key injection bug
   copy: src=guestfs.py dest=/usr/lib/python2.6/site-packages/nova/virt/disk/vfs/
   when: ansible_distribution == 'RedHat'
 
