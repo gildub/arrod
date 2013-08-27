@@ -10,7 +10,7 @@
 
 - name: grant nova user from local IP
   mysql_user: name=nova password={{ nova_db_pass }}
-              host={{ controller_fqdn }}
+              host={{ controller_private_fqdn }}
               priv=nova.*:ALL
               state=present
 

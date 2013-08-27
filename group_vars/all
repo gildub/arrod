@@ -1,7 +1,10 @@
 ---
 # Globals
-controller_fqdn: "{{ hostvars[groups['openstack_controllers'][0]].ansible_fqdn }}"
-controller_ip: "{{ hostvars[groups['openstack_controllers'][0]].ansible_all_ipv4_addresses[0] }}"
+# Watch out for interface order
+controller_private_fqdn: "{{ hostvars[groups['openstack_controllers'][0]].ansible_fqdn }}"
+controller_private_ip: "{{ hostvars[groups['openstack_controllers'][0]].ansible_all_ipv4_addresses[0] }}"
+controller_public_fqdn: "{{ hostvars[groups['openstack_controllers'][0]].ansible_fqdn }}"
+controller_public_ip: "{{ hostvars[groups['openstack_controllers'][0]].ansible_all_ipv4_addresses[1] }}"
 migrate: False
 
 # Mysql

@@ -1,5 +1,5 @@
 ---
-# Tasks for openstack neutron service node
+# Tasks for openstack neutron service (neutron-server)
 
 # Agent package required for configuration (see handlers)
 - name: install neutron server
@@ -9,13 +9,24 @@
     - openstack-neutron-openvswitch
     - openstack-utils
 
-- name: setup neutron database
-  shell: /usr/bin/neutron-server-setup -q {{ neutron_db_pass }} -u neutron -r "{{ mysql_root_pass }}" --plugin openvswitch -y
-         creates=/var/lib/mysql/ovs_neutron
+- name: create ovs_neutron database
+  mysql_db: name=ovs_neutron state=present
+
+- name: grant sql neutron user from %
+  mysql_user: name=neutron password={{ neutron_db_pass }}
+              host=%
+              priv=ovs_neutron.*:ALL
+              state=present
 
 - name: grant sql neutron user from local IP
   mysql_user: name=neutron password={{ neutron_db_pass }}
-              host={{ controller_fqdn }}
+              host={{ controller_private_fqdn }}
+              priv=ovs_neutron.*:ALL
+              state=present
+
+- name: grant sql neutron user from localhost
+  mysql_user: name=neutron password={{ neutron_db_pass }}
+              host=localhost
               priv=ovs_neutron.*:ALL
               state=present
 
@@ -29,7 +40,7 @@
    - openstack-nova-cert
    - openstack-nova-console
    - openstack-nova-conductor
-  delegate_to: "{{ controller_ip }}"
+  delegate_to: "{{ controller_private_ip }}"
 
 - include: ../../openstack-neutron-l2-agent/tasks/plugin-config.yml
 

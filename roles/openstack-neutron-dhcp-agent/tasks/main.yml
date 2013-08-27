@@ -10,7 +10,7 @@
   with_items:
     - core_plugin neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2
     - control_exchange neutron
-    - qpid_hostname {{ controller_ip }}
+    - qpid_hostname {{ controller_private_ip }}
     - rpc_backend neutron.openstack.common.rpc.impl_qpid
     - notification_topics notifications
 

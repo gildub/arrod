@@ -56,9 +56,9 @@ NEUTRON_PASSWORD=${NEUTRON_PASSWORD:-${SERVICE_PASSWORD:-neutron}}
 #CONTROLLER_PUBLIC_ADDRESS=${CONTROLLER_PUBLIC_ADDRESS:-localhost}
 #CONTROLLER_ADMIN_ADDRESS=${CONTROLLER_ADMIN_ADDRESS:-localhost}
 #CONTROLLER_INTERNAL_ADDRESS=${CONTROLLER_INTERNAL_ADDRESS:-localhost}
-CONTROLLER_PUBLIC_ADDRESS={{ ansible_default_ipv4.address }}
-CONTROLLER_ADMIN_ADDRESS={{ ansible_default_ipv4.address }} 
-CONTROLLER_INTERNAL_ADDRESS={{ ansible_default_ipv4.address }}
+CONTROLLER_PUBLIC_ADDRESS={{ controller_public_ip }}
+CONTROLLER_ADMIN_ADDRESS={{ controller_private_ip }} 
+CONTROLLER_INTERNAL_ADDRESS={{ controller_private_ip }}
 
 
 TOOLS_DIR=$(cd $(dirname "$0") && pwd)

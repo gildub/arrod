@@ -7,12 +7,12 @@
 - name: configure metadata agent  
   command: /usr/bin/openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT {{ item }}
   with_items:
-    - auth_url http://{{ controller_ip }}:35357/v2.0/
+    - auth_url http://{{ controller_private_ip }}:35357/v2.0/
     - auth_region RegionOne
     - admin_tenant_name service
     - admin_user neutron
     - admin_password {{ service_pass }}
-    - nova_metadata_ip {{ controller_ip }}
+    - nova_metadata_ip {{ controller_private_ip }}
     - metadata_proxy_shared_secret {{ neutron_metadata_proxy_shared_secret }}
 
 - name: configure nova for openstack networking metadata agent
@@ -20,7 +20,7 @@
   with_items:
     - service_neutron_metadata_proxy True
     - neutron_metadata_proxy_shared_secret {{ neutron_metadata_proxy_shared_secret }}
-  delegate_to: "{{ controller_ip }}"
+  delegate_to: "{{ controller_private_ip }}"
 
 - name: activate metadata agent
   service: name=neutron-metadata-agent state=started enabled=yes

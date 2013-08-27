@@ -7,12 +7,10 @@
     - network_api_class nova.network.neutronv2.api.API
     - neutron_admin_username admin
     - neutron_admin_password {{ admin_pass }}
-    - neutron_admin_auth_url http://{{ controller_ip }}:35357/v2.0
+    - neutron_admin_auth_url http://{{ controller_private_ip }}:35357/v2.0
     - neutron_auth_strategy keystone
     - neutron_admin_tenant_name admin
-    - neutron_url http://{{ controller_ip }}:9696
+    - neutron_url http://{{ controller_private_ip }}:9696
     - security_group_api neutron
     - firewall_driver nova.virt.firewall.NoopFirewallDriver
-  delegate_to: "{{ controller_ip }}"
-
-
+  delegate_to: "{{ controller_private_ip }}"

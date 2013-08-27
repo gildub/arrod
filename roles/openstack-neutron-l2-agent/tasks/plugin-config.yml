@@ -11,14 +11,14 @@
     - default_notification_level INFO
     - default_publisher_id $host
     - allow_overlapping_ips True
-    - qpid_hostname {{ controller_ip }}
+    - qpid_hostname {{ controller_private_ip }}
     - verbose True
 #    - control_exchange neutron
 
 - name: configure neutron service database section
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf database {{ item }}
   with_items:
-    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
+    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_private_ip }}/ovs_neutron?charset=utf8
     - retry_interval 2
 
 - name: configure neutron service quotas section
@@ -42,7 +42,7 @@
 - name: configure neutron keystone_authtoken section
   command: /usr/bin/openstack-config --set /etc/neutron/neutron.conf keystone_authtoken {{ item }}
   with_items:
-    - auth_host {{ controller_ip }}
+    - auth_host {{ controller_private_ip }}
     - auth_port 35357
     - auth_protocol http
     - signing_dir /var/lib/neutron/keystone-signing
@@ -59,7 +59,7 @@
 - name: configure neutron l2 agent database section
   command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini database {{ item }}
   with_items:
-    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_ip }}/ovs_neutron?charset=utf8
+    - connection mysql://neutron:"{{ neutron_db_pass }}"@{{ controller_private_ip }}/ovs_neutron?charset=utf8
 
 - name: configure neutron l2 agent agent section
   command: /usr/bin/openstack-config --set /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini agent {{ item }}

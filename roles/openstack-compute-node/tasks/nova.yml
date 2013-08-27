@@ -19,7 +19,7 @@
     # - libvirt_cpu_mode host-passthrough
     - libvirt_cpu_mode host-model
     # novnc
-    - novncproxy_base_url http://{{ controller_fqdn }}:6080/vnc_auto.html
+    - novncproxy_base_url http://{{ controller_public_fqdn }}:6080/vnc_auto.html
     - vncserver_proxyclient_address {{ ansible_all_ipv4_addresses[0] }}
     - vncserver_listen {{ ansible_all_ipv4_addresses[0] }}
 
@@ -29,10 +29,10 @@
     - network_api_class nova.network.neutronv2.api.API
     - neutron_admin_username admin
     - neutron_admin_password {{ admin_pass }}
-    - neutron_admin_auth_url http://{{ controller_ip }}:35357/v2.0
+    - neutron_admin_auth_url http://{{ controller_private_ip }}:35357/v2.0
     - neutron_auth_strategy keystone
     - neutron_admin_tenant_name admin
-    - neutron_url http://{{ controller_ip }}:9696
+    - neutron_url http://{{ controller_private_ip }}:9696
     - security_group_api neutron
     - firewall_driver nova.virt.firewall.NoopFirewallDriver
     - libvirt_vif_driver nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
