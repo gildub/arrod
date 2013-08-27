@@ -5,14 +5,11 @@ For OpenStack Grizzly deployments, please use grizlly branch
 
 Status
 ------
-* Development  
-  Fedora19+: not tested yet  
-  RHEL6.4+  
-  * RDO: in progress  
-  * RHOS40: Check README-RHOS40  
-
-* Stable
-  Checkout grizzly branch
+* Havana
+  * RHEL6.4+
+    * RDO: stable
+    * RHOS40: developement - Check README-RHOS40
+  * Fedora19+: todo
 
 Notes
 -----
