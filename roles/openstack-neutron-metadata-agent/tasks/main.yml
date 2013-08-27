@@ -11,7 +11,7 @@
     - auth_region RegionOne
     - admin_tenant_name service
     - admin_user neutron
-    - admin_password {{ neutron_service_pass }}
+    - admin_password {{ service_pass }}
     - nova_metadata_ip {{ controller_ip }}
     - metadata_proxy_shared_secret {{ neutron_metadata_proxy_shared_secret }}
 

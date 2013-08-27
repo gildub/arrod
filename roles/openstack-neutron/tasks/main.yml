@@ -13,20 +13,11 @@
   shell: /usr/bin/neutron-server-setup -q {{ neutron_db_pass }} -u neutron -r "{{ mysql_root_pass }}" --plugin openvswitch -y
          creates=/var/lib/mysql/ovs_neutron
 
-- name: grant neutron user from local IP
+- name: grant sql neutron user from local IP
   mysql_user: name=neutron password={{ neutron_db_pass }}
               host={{ controller_fqdn }}
               priv=ovs_neutron.*:ALL
               state=present
-
-- name: add service tenant
-  keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" tenant=service tenant_description="Service Tenant" 
-
-- name: add neutron user for service tenant
-  keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" user=neutron tenant=service password={{ neutron_service_pass }}
-
-- name: add neutron user role for service tenant
-  keystone_user: token={{ keystone_admin_token }} endpoint="http://localhost:35357/v2.0/" role=admin user=neutron tenant=service
 
 - include: nova-config.yml
 
