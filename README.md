@@ -7,7 +7,7 @@ Status
 ------
 * Havana
   * RHEL6.4+
-    * RDO: stable
+    * RDO(Havana2): stable
     * RHOS40: developement - Check README-RHOS40
   * Fedora19+: todo
 
