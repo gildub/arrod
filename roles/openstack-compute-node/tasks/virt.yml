@@ -20,6 +20,7 @@
 
 - name: stop libvirt default network
   command: /usr/bin/virsh net-destroy default 
+  async: 300
   ignore_errors: True
 
 - name: delete libvirt default network
