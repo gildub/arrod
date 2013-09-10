@@ -20,7 +20,7 @@ Storage and HA are not supported yet but working on it.
 
 Issues
 ------
-Multiple Controller doesn't work and will break the configuration. 
+Multiple Controllers doesn't work and will break the configuration. 
 This should be taken care of with HA
 
 Assumptions

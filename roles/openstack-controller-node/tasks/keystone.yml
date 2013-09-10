@@ -12,7 +12,11 @@
 
 # keystone.conf
 - name: configure keystone [DEFAULT] section
-  command: /usr/bin/openstack-config --set /etc/keystone/keystone.conf DEFAULT admin_token {{ keystone_admin_token }}
+  command: /usr/bin/openstack-config --set /etc/keystone/keystone.conf DEFAULT {{ item }}
+  with_items: 
+    - admin_token {{ keystone_admin_token }}
+    - public_port 5000
+    - admin_port 35357
 
 - name: configure keystone [sql] section
   command: /usr/bin/openstack-config --set /etc/keystone/keystone.conf sql connection mysql://keystone:{{ keystone_db_pass }}@localhost/keystone
