@@ -7,6 +7,10 @@
    - openstack-keystone
    - python-keystoneclient
 
+- name: copy distrib keystone-paste.ini
+  command: /bin/cp /usr/share/keystone/keystone-dist-paste.ini /etc//keystone/keystone-paste.ini
+           creates=/etc/keystone/keystone-paste.ini
+
 - name: setup keystone database
   shell: creates=/var/lib/mysql/keystone /usr/bin/openstack-db --init --service keystone -p {{ keystone_db_pass }} -r "{{ mysql_root_pass }}" -y 
 

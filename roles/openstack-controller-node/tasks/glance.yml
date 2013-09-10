@@ -9,7 +9,7 @@
   command: /bin/cp /usr/share/glance/glance-registry-dist-paste.ini /etc/glance/glance-registry-paste.ini
            creates=/etc/glance/glance-registry-paste.ini
 
-- name: copy default glance-api-paste.ini 
+- name: copy distrib glance-api-paste.ini 
   command: /bin/cp /usr/share/glance/glance-api-dist-paste.ini /etc/glance/glance-api-paste.ini
            creates=/etc/glance/glance-api-paste.ini
 # End workaround
