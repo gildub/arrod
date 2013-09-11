@@ -40,10 +40,6 @@
 - name: give permissions to lock folder
   file: path=/var/lock/ state=directory owner=root group=root mode=0777
 
-- name: copy the modified file for key injection bug
-  copy: src=guestfs.py dest=/usr/lib/python2.6/site-packages/nova/virt/disk/vfs/
-  when: ansible_distribution == 'RedHat'
-
 - name: restart nova compute
   service: name=openstack-nova-compute state=started enabled=yes
 
