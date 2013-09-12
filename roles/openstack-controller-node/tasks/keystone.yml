@@ -7,9 +7,14 @@
    - openstack-keystone
    - python-keystoneclient
 
-- name: copy distrib keystone-paste.ini
-  command: /bin/cp /usr/share/keystone/keystone-dist-paste.ini /etc//keystone/keystone-paste.ini
+- name: copy distrib keystone-paste.ini for RedHat
+  command: /bin/cp /usr/share/keystone/keystone-dist-paste.ini /etc/keystone/keystone-paste.ini
            creates=/etc/keystone/keystone-paste.ini
+  when: ansible_distribution == 'RedHat'
+
+- name: copy distrib keystone-paste.ini for Fedora
+  copy: src=keystone-dist-paste.ini dest=/usr/share/keystone/keystone-paste.ini
+  when: ansible_distribution == 'Fedora'
 
 - name: fix keystone config files ownership
   file: path=/etc/keystone recurse=yes owner=keystone group=keystone state=directory 
