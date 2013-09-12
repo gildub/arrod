@@ -13,7 +13,7 @@
   when: ansible_distribution == 'RedHat'
 
 - name: copy distrib keystone-paste.ini for Fedora
-  copy: src=keystone-dist-paste.ini dest=/usr/share/keystone/keystone-paste.ini
+  copy: src=keystone-dist-paste.ini dest=/etc/keystone/keystone-paste.ini
   when: ansible_distribution == 'Fedora'
 
 - name: fix keystone config files ownership
