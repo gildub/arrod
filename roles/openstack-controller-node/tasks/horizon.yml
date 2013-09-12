@@ -1,7 +1,7 @@
 ---
 # Tasks for the Horizon controller node
 
-- name: install OpenStack Horizon packages
+- name: install OpenStack Horizon packages on RedHat
   yum: name={{ item }} state=installed
   with_items: 
    - memcached 
@@ -9,6 +9,19 @@
    - mod_wsgi 
    - openstack-dashboard
    - openstack-nova-novncproxy
+  when: ansible_distribution == 'RedHat'
+
+# BZ#1006459
+- name: install OpenStack Horizon packages on Fedora
+  yum: name={{ item }} state=installed
+  with_items: 
+   - memcached 
+   - python-memcached 
+   - mod_wsgi 
+   - openstack-dashboard
+   - openstack-nova-novncproxy
+   - python-django-horizon
+  when: ansible_distribution == 'Fedora'
 
 - name: copy horizon configuration file
   template: src=local_settings.j2 dest=/etc/openstack-dashboard/local_settings
