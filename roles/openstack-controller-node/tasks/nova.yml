@@ -8,11 +8,18 @@
   command: /usr/bin/openstack-db --init --service nova -p {{ nova_db_pass }} -r "{{ mysql_root_pass }}" -y
            creates=/var/lib/mysql/nova
 
-- name: grant nova user from local IP
+- name: grant nova user for private FQDN
   mysql_user: name=nova password={{ nova_db_pass }}
               host={{ controller_private_fqdn }}
               priv=nova.*:ALL
               state=present
+# On Fedora19, sync nova fails without it
+- name: grant nova user for public FQDN
+  mysql_user: name=nova password={{ nova_db_pass }}
+              host={{ controller_public_fqdn }}
+              priv=nova.*:ALL
+              state=present
+  when: ansible_distribution == 'Fedora'
 
 - name: sync nova database
   shell: nova-manage db sync
