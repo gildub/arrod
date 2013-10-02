@@ -1,16 +1,16 @@
 Intro
 -----
 Ansible plays to deploy OpenStack Havana with Neutron on RHEL 6.4+ or Fedora 19+  
-For OpenStack Grizzly deployments, please use grizlly branch
+For OpenStack Grizzly deployments, please use grizzly branch
 
 Status
 ------
 * Havana
   * RHEL6.4+
     * RDO(Havana 2): stable
-    * RDO(Havana 3): development
+    * RDO(Havana 3): work in progress
     * RHOS40: developement - Check README-RHOS40
-  * Fedora19+: todo
+  * Fedora19+: work in progress
 
 Notes
 -----
